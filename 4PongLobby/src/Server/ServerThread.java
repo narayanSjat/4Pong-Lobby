@@ -9,11 +9,20 @@ package Server;
  *
  * @author Jason Xu
  */
+import Server.Util.*;
 import java.net.*;
 import java.io.*;
 
+
 public class ServerThread extends Thread
-{  private Socket socket   = null;
+{  
+   
+   public static final int USERDNE = -2;
+   public static final int INVALIDCOMMAND = -1;
+   
+   public Util utils = new Util();
+           
+   private Socket socket   = null;
    private Server server   = null;
    private int ID = -1;
    private DataInputStream streamIn =  null;
@@ -25,7 +34,10 @@ public class ServerThread extends Thread
    {  System.out.println("Server Thread " + ID + " running.");
       while (true)
       {  try
-         {  System.out.println(streamIn.readUTF());
+         {  
+             String input = streamIn.readUTF();
+             int ret = utils.processCommand(input);
+             
          }
          catch(IOException ioe) {  }
       }
@@ -37,4 +49,6 @@ public class ServerThread extends Thread
    {  if (socket != null)    socket.close();
       if (streamIn != null)  streamIn.close();
    }
+   
+    
 }
