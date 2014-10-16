@@ -13,20 +13,17 @@ import static Server.ServerThread.USERDNE;
  * @author Jason Xu
  */
 public class Util {
-    public DataBase object;
-    
-    public void init(){
-        object = new DataBase();
-    }
+    public DataBase object =new DataBase();
+
     
     public int processCommand(String input){
         String[] splitInput = input.split(",");
         for(int i = 0; i < splitInput.length; i++){
             splitInput[i] = splitInput[i].trim();
-            System.out.println(splitInput[i]);
+            //System.out.println(splitInput[i]);
         }
         
-        if(splitInput[0].equals("updateName")){
+        if(splitInput[0].equals("updateUser")){
             boolean nameExists = object.nameTaken(splitInput[1]);
             if(!nameExists){
                 System.out.println("User DNE, can not be updated");
@@ -34,6 +31,7 @@ public class Util {
             }
             else {
                 object.updateUser(splitInput[1], splitInput[2]);
+                System.out.println("Updated User: "+ splitInput[1] + " -> " + splitInput[2]);
             }
         }
         else if(splitInput[0].equals("newUser")){
@@ -44,10 +42,11 @@ public class Util {
             }
             else{
                 object.newUser(splitInput[1]);
+                System.out.println("Added new user: " + splitInput[1]);
             }
             
         }
-        else if(splitInput[0].equals("removeName")){
+        else if(splitInput[0].equals("removeUser")){
             boolean nameExists = object.nameTaken(splitInput[1]);
             if(!nameExists){
                 System.out.println("User DNE, can not be removed");
@@ -55,6 +54,8 @@ public class Util {
             }
             else{
                 object.removeUser(splitInput[1]);
+                System.out.println("Removed User: " + splitInput[1]);
+
             }
             
         }
@@ -66,6 +67,7 @@ public class Util {
         }
         else{
             //Not a valid command, return error
+            System.out.println("Invalid Command");
             return INVALIDCOMMAND;
         }
         
