@@ -5,6 +5,7 @@
  */
 package DataBase;
 
+import Server.ServerThread;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +18,7 @@ import static Server.ServerThread.USERDNE;
 public class DataBase {
     // List of all the usernames currently in the Lobby
     public List<String> list = Collections.synchronizedList(new ArrayList<String>());
+    
     
     
     public void newUser(String newUser){

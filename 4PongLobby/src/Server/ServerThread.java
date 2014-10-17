@@ -12,6 +12,10 @@ package Server;
 import Server.Util.*;
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class ServerThread extends Thread
@@ -26,7 +30,9 @@ public class ServerThread extends Thread
    private Server server   = null;
    private int ID = -1;
    private DataInputStream streamIn =  null;
-   //private DataOutputStream streamOut = null;
+   private DataOutputStream streamOut = null;
+   public ArrayList<ServerThread> clientList = new ArrayList<ServerThread>();
+   public String processed = "Processed Command\n";
 
    public ServerThread(Server _server, Socket _socket)
    {  server = _server;  socket = _socket;  ID = socket.getPort();
@@ -34,28 +40,23 @@ public class ServerThread extends Thread
    public void run()
    {  
         System.out.println("Server Thread " + ID + " running.");
-        String processed = "Processed Command\n";
+        
+        clientList.add(this);
+
         while (true){  
-            try{  
-                String input = streamIn.readUTF();
-                int ret = utils.processCommand(input);
-                
-                OutputStream os = socket.getOutputStream();
-                OutputStreamWriter osw = new OutputStreamWriter(os);
-                BufferedWriter bw = new BufferedWriter(osw);
-                bw.write(processed);
-                System.out.println("Message sent to the client is " + processed);
-                bw.flush();
-                //streamOut.writeUTF(processed);
-                //streamOut.flush();
-             
+            String input = null;
+            try {
+                input = read();
+            } catch (IOException ex) {
+                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            catch(IOException ioe) {  }
+            String ret = utils.processCommand(input);
+            write(processed);
         }
    }
    public void open() throws IOException
    {  streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-      //streamOut = new DataOutputStream(socket.getOutputStream());
+      streamOut = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
    }
    public void close() throws IOException
@@ -63,5 +64,27 @@ public class ServerThread extends Thread
       if (streamIn != null)  streamIn.close();
    }
    
+   public void write(Object msg){
+       try{
+           streamOut.writeUTF((String) msg);
+           System.out.println("Message sent to the client is " + processed);
+           streamOut.flush();
+
+       }catch(Exception e){
+           e.printStackTrace();
+       }
+   }
+   
+   public String read() throws IOException{
+       return streamIn.readUTF();
+   }
+   public void sendToOne(int index, Object message){
+       clientList.get(index).write(message);
+   }
+   
+   public void sendToAll(Object message){
+        for(ServerThread client : clientList)
+            client.write(message);
+   }
     
 }

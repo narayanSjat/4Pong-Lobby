@@ -16,7 +16,7 @@ public class Util {
     public DataBase object =new DataBase();
 
     
-    public int processCommand(String input){
+    public String processCommand(String input){
         String[] splitInput = input.split(",");
         for(int i = 0; i < splitInput.length; i++){
             splitInput[i] = splitInput[i].trim();
@@ -27,7 +27,7 @@ public class Util {
             boolean nameExists = object.nameTaken(splitInput[1]);
             if(!nameExists){
                 System.out.println("User DNE, can not be updated");
-                return -1; //Need to figure out a standard for returning error messages
+                return "USERDNE"; //Need to figure out a standard for returning error messages
             }
             else {
                 object.updateUser(splitInput[1], splitInput[2]);
@@ -38,7 +38,7 @@ public class Util {
             boolean nameExists = object.nameTaken(splitInput[1]);
             if(nameExists){
                 System.out.println("User exists, cant add new user");
-                return -1; //Need to figure out a standard for returning error messages
+                return "USEREXISTS"; //Need to figure out a standard for returning error messages
             }
             else{
                 object.newUser(splitInput[1]);
@@ -50,7 +50,7 @@ public class Util {
             boolean nameExists = object.nameTaken(splitInput[1]);
             if(!nameExists){
                 System.out.println("User DNE, can not be removed");
-                return -1; //Need to figure out a standard for returning error messages
+                return"USERDNE"; //Need to figure out a standard for returning error messages
             }
             else{
                 object.removeUser(splitInput[1]);
@@ -68,10 +68,10 @@ public class Util {
         else{
             //Not a valid command, return error
             System.out.println("Invalid Command");
-            return INVALIDCOMMAND;
+            return "INVALIDCOMMAND";
         }
         
-        return 0;
+        return splitInput[0];
     }
    
 }

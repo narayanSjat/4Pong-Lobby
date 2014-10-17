@@ -2,11 +2,14 @@ package Server;
 
 import java.net.*;
 import java.io.*;
+import DataBase.DataBase.*;
+import java.util.ArrayList;
 
 public class Server implements Runnable
 {  private ServerSocket     server = null;
    private Thread           thread = null;
    private ServerThread client = null;
+   public ArrayList<ServerThread> clientList = new ArrayList<ServerThread>();
 
    public Server(int port)
    {  try
@@ -33,6 +36,8 @@ public class Server implements Runnable
    {  System.out.println("Client accepted: " + socket);
       client = new ServerThread(this, socket);
       client.open();
+      clientList.add(client);
+
       client.start();
    }
    public void start()
